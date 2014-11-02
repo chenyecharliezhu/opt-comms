@@ -1,0 +1,31 @@
+A dPPM signal looks like this:
+
+______   _   _      _   _________
+      | | | | |    | | |
+      |_| |_| |____| |_|
+  
+  Where it rests HIGH when idle
+  and the signal is the length of the LOW gaps between the short HIGH spikes.
+  
+  To measure this, we need three interrupts:
+  1) A Falling Edge interrupt to detect the start of a gap
+  2) A Rising Edge interrupt to detect the end of a gap
+  3) A Timeout interrupt to distinguish between a spike and the end of signal (return to idle).
+  
+  The code, after initializing whatever variables are needed, will enter an event loop
+  where it handles the interrupts as follows:
+  
+  FALLING EDGE
+  cancel timeout.
+  Begin a timer.
+  
+  RISING EDGE
+  Begin timeout.
+  Stop timer.
+  if timer > some threshold, store a 0, otherwise store a 1
+  
+  TIMEOUT
+  Save signal packet
+  Reset to initial conditions.
+  if time allows, decode packet as well.
+  
