@@ -9,8 +9,6 @@
 #ifndef OPCOMMCHECKSUMMETHODS_H
 #define OPCOMMCHECKSUMMETHODS_H
 
-class opcommMessage;
-
 namespace opcommChecksumMethods {
 
     extern std::string addChecksum_NoChecksumMethod (const std::string &encryptedMessage);

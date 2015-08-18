@@ -5,8 +5,9 @@
  *
  *  To be implemented
  */
+
 #include "opcommmessagereceive.h"
 
-opcommMessageReceive::opcommMessageReceive() {
+opcommMessageReceive::opcommMessageReceive(){
 
 }

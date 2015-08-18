@@ -8,5 +8,5 @@
 
 #include "opcommmessagesend.h"
 
-opcommMessageSend::opcommMessageSend() {
+opcommMessageSend::opcommMessageSend(){
 }

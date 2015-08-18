@@ -4,9 +4,8 @@
  *  Namespaces containing AddingChecksum and RemovingChecksum methods.
  *      Comsumed by opcommMessage class
  */
-#include "opcommchecksummethods.h"
 
-class opcommMessage;
+#include "opcommchecksummethods.h"
 
 namespace opcommChecksumMethods {
 

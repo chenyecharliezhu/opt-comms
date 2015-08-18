@@ -53,7 +53,7 @@ class opcommMessage {
                      || (Helper_toString(containerMessageReadable).compare(other.messageToString(MessageReadable)) != 0));
         }
 
-        opcommMessage& operator = (opcommMessage &other){
+        inline opcommMessage& operator = (opcommMessage &other){
             encryption = other.getEncryptionMethod();
             checksum = other.getChecksumMethod();
             Helper_ReplaceMessageWith(other.messageToString(MessageReadable), containerMessageReadable);
@@ -67,8 +67,11 @@ class opcommMessage {
         std::string EncryptionMethodToString();
         std::string ChecksumMethodToString();
 
-        // IO Functions
-        // Standardized and unified IO interface for all message types
+        /**
+         * IO Support
+         *      Standardized and unified IO interface for all message types
+         */
+
         void eraseMessage();
 
         void printMessage(MessageType messageType);

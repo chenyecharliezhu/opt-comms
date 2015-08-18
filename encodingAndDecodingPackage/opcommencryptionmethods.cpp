@@ -7,10 +7,8 @@
 
 #include "opcommencryptionmethods.h"
 
-class opcommMessage;
+namespace opcommEncryptionMethods {
 
-namespace opcommEncryptionMethods
-{
     std::string encrypt_NoEncryptionMethod(const std::string &readableMessage){
         return readableMessage;
     }
@@ -18,4 +16,5 @@ namespace opcommEncryptionMethods
     std::string decipher_NoEncryptionMedthod(const std::string &encryptedMessage){
         return encryptedMessage;
     }
+
 }

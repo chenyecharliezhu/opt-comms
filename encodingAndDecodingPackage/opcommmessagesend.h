@@ -12,6 +12,7 @@
 #define OPCOMMMESSAGESEND_H
 
 class opcommMessageSend : public opcommMessage {
+
     public:
         opcommMessageSend();
 
