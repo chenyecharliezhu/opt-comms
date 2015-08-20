@@ -11,8 +11,8 @@
 
 namespace opcommEncryptionMethods {
 
-    extern std::string encrypt_NoEncryptionMethod (const std::string &readableMessage);
-    extern std::string decipher_NoEncryptionMedthod (const std::string &encryptedMessage);
+    std::string encrypt_NoEncryptionMethod (const std::string &readableMessage);
+    std::string decipher_NoEncryptionMedthod (const std::string &encryptedMessage);
 
 }
 

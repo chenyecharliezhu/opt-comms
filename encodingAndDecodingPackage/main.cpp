@@ -7,8 +7,43 @@ using namespace std;
 static const string textFile = "test.bitpattern";
 static const string messageFile = "test.message";
 
+void testOpcommMessage();
+
 // Tests
 int main() {
+
+    opcommMessage testFour;
+    testFour.replaceMessageWith(opcommMessage::MessageReadable, "1");
+
+    opcommMessage testFive;
+    testFive.replaceMessageWith(opcommMessage::MessageReadable, "9");
+
+    opcommMessage testSix;
+    unsigned char testChar = '1' ^ '6';
+    std::string testString;
+    testString += testChar;
+    testSix.replaceMessageWith(opcommMessage::MessageReadable, testString);
+
+    std::cout << testFour.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
+    std::cout << testFive.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
+    std::cout << testSix.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
+
+    std::cout << std::endl << std::endl;
+
+    opcommMessage testSeven;
+    testSeven.replaceMessageWith(opcommMessage::MessageReadable, "my name is charlie");
+    std::cout << testSeven.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
+    testSeven.replaceMessageWith(opcommMessage::MessageReadable, opcommChecksumMethods::addChecksum_LRC8(testSeven.messageToString(opcommMessage::MessageReadable)));
+    std::cout << testSeven.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
+
+    std::cout << opcommChecksumMethods::rmChecksum_LRC8(]testSeven.messageToString(opcommMessage::MessageReadable)) << std::endl;
+    std::cout << opcommChecksumMethods::validateChecksum_LRC8(testSeven.messageToString(opcommMessage::MessageReadable)) << std::endl;
+    std::cout << opcommChecksumMethods::validateChecksum_LRC8("bb") << std::endl;
+    return 0;
+
+}
+
+void testOpcommMessage(){
     opcommMessage test(opcommMessage::EncryptionMethodNone, opcommMessage::ChecksumMethodNone);
     test.replaceMessageWith(opcommMessage::MessageReadable, "Hello");
     test.printMessage(opcommMessage::MessageEncrypted);
@@ -54,7 +89,4 @@ int main() {
     opcommMessage testThree = testTwo;
     std::cout << "TestTwo : " << testTwo.messageToString(opcommMessage::MessageReadable) << std::endl;
     std::cout << "TestThree : " << testThree.messageToString(opcommMessage::MessageReadable) << std::endl;
-
-    return 0;
 }
-

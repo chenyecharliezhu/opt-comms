@@ -449,10 +449,7 @@ std::string opcommMessage::Helper_toBitPattern(const std::vector<unsigned char> 
 std::string opcommMessage::convertCharToBit(unsigned char ch){
     std::string bitPattern = "";
     for (size_t i = 0; i < CHAR_BIT; i++){
-        if (ch & mask[i])
-            bitPattern += '1';
-        else
-            bitPattern += '0';
+        bitPattern += (ch & mask[i])? '1': '0';
     }
     return bitPattern;
 }
@@ -463,8 +460,7 @@ unsigned char opcommMessage::convertBitToChar(const std::string &bitPattern){
 
     unsigned char character = 0;
     for (size_t  i = 0; i < bitPattern.length(); i ++)
-        if (bitPattern[i] == '1')
-            character += mask[i];
+        character += (bitPattern[i] == '1')? mask[i]: 0;
     return character;
 }
 

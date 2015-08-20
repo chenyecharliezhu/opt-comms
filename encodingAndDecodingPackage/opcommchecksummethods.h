@@ -11,8 +11,15 @@
 
 namespace opcommChecksumMethods {
 
-    extern std::string addChecksum_NoChecksumMethod (const std::string &encryptedMessage);
-    extern std::string rmChecksum_NoChecksumMethod (const std::string &checksumMessage);
+    std::string addChecksum_NoChecksumMethod(const std::string &encryptedMessage);
+    std::string rmChecksum_NoChecksumMethod(const std::string &checksumMessage);
+    bool validateChecksum_NoChecksumMethod(const std::string &checksumMessage);
+
+    static const unsigned int MINIMUM_LENGTH_LRC8 = 1;
+    // Bitwise XOR
+    std::string addChecksum_LRC8(const std::string &encryptedMessage);
+    std::string rmChecksum_LRC8(const std::string &checksumMessage);
+    bool validateChecksum_LRC8(const std::string &checksumMessage);
 
 }
 
