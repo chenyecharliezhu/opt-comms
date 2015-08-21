@@ -21,6 +21,9 @@ unsigned char opcommMessage::mask[] = {128, 64, 32, 16, 8, 4, 2, 1};
 opcommMessage::opcommMessage(EncryptionMethods enMethod, ChecksumMethods ckMethod){
     this->encryption = enMethod;
     this->checksum = ckMethod;
+    this->lengthMessageReadable = 0;
+    this->lengthMessageEncrypted = 0;
+    this->lengthMessageEncryptedChecksum = 0;
 }
 
 // Utility functions
@@ -82,44 +85,14 @@ void opcommMessage::printMessage(MessageType messageType){
     }
 }
 
-void opcommMessage::appendToMessage(MessageType messageType, const std::string &messageTrailing){
-    switch (messageType){
-        case MessageReadable:
-            Helper_AppendToMessage(messageTrailing, containerMessageReadable);
-            getSyncFromMessageReadable();
-            break;
-        case MessageEncrypted:
-            Helper_AppendToMessage(messageTrailing, containerMessageEncrypted);
-            getSyncFromMessageEncrypted();
-            break;
-        case MessageEncryptedChecksum:
-            Helper_AppendToMessage(messageTrailing, containerMessageEncryptedChecksum);
-            getSyncFromMessageEncryptedChecksum();
-            break;
-        default:
-            std::cout << Helper_IOErrorMessage_UnrecognizedMessageType("appendToMessage") << std::endl;
-            break;
-    }
+void opcommMessage::appendToMessageReable(const std::string &messageTrailing){
+       lengthMessageReadable += Helper_AppendToMessage(messageTrailing, containerMessageReadable);
+       getSyncFromMessageReadable();
 }
 
-void opcommMessage::replaceMessageWith(MessageType messageType, const std::string &newMessage){
-    switch (messageType){
-        case MessageReadable:
-            Helper_ReplaceMessageWith(newMessage, containerMessageReadable);
-            getSyncFromMessageReadable();
-            break;
-        case MessageEncrypted:
-            Helper_ReplaceMessageWith(newMessage, containerMessageEncrypted);
-            getSyncFromMessageEncrypted();
-            break;
-        case MessageEncryptedChecksum:
-            Helper_ReplaceMessageWith(newMessage, containerMessageEncryptedChecksum);
-            getSyncFromMessageEncryptedChecksum();
-            break;
-        default:
-            std::cout << Helper_IOErrorMessage_UnrecognizedMessageType("replaceMessageWith") << std::endl;
-            break;
-    }
+void opcommMessage::replaceMessageReadableWith(const std::string &newMessage){
+    lengthMessageReadable = Helper_ReplaceMessageWith(newMessage, containerMessageReadable);
+    getSyncFromMessageReadable();
 }
 
 bool opcommMessage::writeMessageToFile(MessageType messageType, const std::string &outputFileName){
@@ -166,17 +139,17 @@ bool opcommMessage::readMessageFromFile_ReplacingExistingMessages(MessageType me
     bool result;
     switch (messageType){
         case MessageReadable:
-            result = Helper_ReadMessageFromFile_ReplacingExistingMessages(inputFileName, containerMessageReadable);
+            result = Helper_ReadMessageFromFile_ReplacingExistingMessages(inputFileName, containerMessageReadable, lengthMessageReadable);
             if (result)
                 getSyncFromMessageReadable();
             break;
         case MessageEncrypted:
-            result = Helper_ReadMessageFromFile_ReplacingExistingMessages(inputFileName, containerMessageEncrypted);
+            result = Helper_ReadMessageFromFile_ReplacingExistingMessages(inputFileName, containerMessageEncrypted, lengthMessageEncrypted);
             if (result)
                 getSyncFromMessageEncrypted();
             break;
         case MessageEncryptedChecksum:
-            result = Helper_ReadMessageFromFile_ReplacingExistingMessages(inputFileName, containerMessageEncryptedChecksum);
+            result = Helper_ReadMessageFromFile_ReplacingExistingMessages(inputFileName, containerMessageEncryptedChecksum, lengthMessageEncryptedChecksum);
             if (result)
                 getSyncFromMessageEncryptedChecksum();
             break;
@@ -193,13 +166,13 @@ bool opcommMessage::writeMessageBitPatternToFile(MessageType messageType, const 
     bool result;
     switch (messageType){
         case MessageReadable:
-            result = Helper_WriteBitPatternToFile(outputFileName, containerMessageReadable);
+            result = Helper_WriteBitPatternToFile(outputFileName, containerMessageReadable, lengthMessageReadable);
             break;
         case MessageEncrypted:
-            result = Helper_WriteBitPatternToFile(outputFileName, containerMessageEncrypted);
+            result = Helper_WriteBitPatternToFile(outputFileName, containerMessageEncrypted, lengthMessageEncrypted);
             break;
         case MessageEncryptedChecksum:
-            result = Helper_WriteBitPatternToFile(outputFileName, containerMessageEncryptedChecksum);
+            result = Helper_WriteBitPatternToFile(outputFileName, containerMessageEncryptedChecksum, lengthMessageEncryptedChecksum);
             break;
         default:
             std::cout << Helper_IOErrorMessage_UnrecognizedMessageType("writeMessageBitPatternToFile") << std::endl;
@@ -213,13 +186,13 @@ bool opcommMessage::appendMessageBitPatternToFile(MessageType messageType, const
     bool result;
     switch (messageType){
         case MessageReadable:
-            result = Helper_AppendBitPatternToFile(outputFileName, containerMessageReadable);
+            result = Helper_AppendBitPatternToFile(outputFileName, containerMessageReadable, lengthMessageReadable);
             break;
         case MessageEncrypted:
-            result = Helper_AppendBitPatternToFile(outputFileName, containerMessageEncrypted);
+            result = Helper_AppendBitPatternToFile(outputFileName, containerMessageEncrypted, lengthMessageEncrypted);
             break;
         case MessageEncryptedChecksum:
-            result = Helper_AppendBitPatternToFile(outputFileName, containerMessageEncryptedChecksum);
+            result = Helper_AppendBitPatternToFile(outputFileName, containerMessageEncryptedChecksum, lengthMessageEncryptedChecksum);
             break;
         default:
             std::cout << Helper_IOErrorMessage_UnrecognizedMessageType("appendMessageBitPatternToFile") << std::endl;
@@ -233,17 +206,17 @@ bool opcommMessage::readMessageBitPatternFromFile_ReplacingExistingMessages(Mess
     bool result;
     switch (messageType){
         case MessageReadable:
-            result = Helper_ReadBitPatternFromFile_ReplacingExistingMessages(inputFileName, containerMessageReadable);
+            result = Helper_ReadBitPatternFromFile_ReplacingExistingMessages(inputFileName, containerMessageReadable, lengthMessageReadable);
             if (result)
                 getSyncFromMessageReadable();
             break;
         case MessageEncrypted:
-            result = Helper_ReadBitPatternFromFile_ReplacingExistingMessages(inputFileName, containerMessageEncrypted);
+            result = Helper_ReadBitPatternFromFile_ReplacingExistingMessages(inputFileName, containerMessageEncrypted, lengthMessageEncrypted);
             if (result)
                 getSyncFromMessageEncrypted();
             break;
         case MessageEncryptedChecksum:
-            result = Helper_ReadBitPatternFromFile_ReplacingExistingMessages(inputFileName, containerMessageEncryptedChecksum);
+            result = Helper_ReadBitPatternFromFile_ReplacingExistingMessages(inputFileName, containerMessageEncryptedChecksum, lengthMessageEncryptedChecksum);
             if (result)
                 getSyncFromMessageEncryptedChecksum();
             break;
@@ -277,13 +250,13 @@ std::string opcommMessage::messageToString(MessageType messageType){
 std::string opcommMessage::messageToBitPattern(MessageType messageType){
     switch (messageType){
         case MessageReadable:
-            return Helper_toBitPattern(containerMessageReadable);
+            return Helper_toBitPattern(containerMessageReadable, lengthMessageReadable);
             break;
         case MessageEncrypted:
-            return Helper_toBitPattern(containerMessageEncrypted);
+            return Helper_toBitPattern(containerMessageEncrypted, lengthMessageEncrypted);
             break;
         case MessageEncryptedChecksum:
-            return Helper_toBitPattern(containerMessageEncryptedChecksum);
+            return Helper_toBitPattern(containerMessageEncryptedChecksum, lengthMessageEncryptedChecksum);
             break;
         default:
             std::cout << Helper_IOErrorMessage_UnrecognizedMessageType("messageToBitPattern") << std::endl;
@@ -297,30 +270,33 @@ void opcommMessage::Helper_PrintMessage(const std::vector<unsigned char> &messag
     std::cout << Helper_toString(messageContainer);
 }
 
-void opcommMessage::Helper_AppendToMessage(const std::string& messageTrailing, std::vector<unsigned char> &messageContainer){
+unsigned int opcommMessage::Helper_AppendToMessage(const std::string &messageTrailing, std::vector<unsigned char> & messageContainer){
     // Adding new line characters
     messageContainer.push_back('\r');
     messageContainer.push_back('\n');
     copy(messageTrailing.begin(), messageTrailing.end(), back_inserter(messageContainer));
+    return (messageTrailing.length() + 2) * CHAR_BIT;
 }
 
-void opcommMessage::Helper_ReplaceMessageWith(const std::string &newMessage, std::vector<unsigned char> &messageContainer){
+unsigned int opcommMessage::Helper_ReplaceMessageWith(const std::string &newMessage, std::vector<unsigned char> &messageContainer){
     messageContainer.clear();
     copy(newMessage.begin(), newMessage.end(), back_inserter(messageContainer));
+    return newMessage.length() * CHAR_BIT;
 }
 
-bool opcommMessage::Helper_ReadMessageFromFile_ReplacingExistingMessages(const std::string &inputFileName, std::vector<unsigned char> &messageContainer){
+bool opcommMessage::Helper_ReadMessageFromFile_ReplacingExistingMessages(const std::string &inputFileName, std::vector<unsigned char> &messageContainer, unsigned int & messageLength){
     std::ifstream inputFile(inputFileName.c_str(), std::fstream::in);
     bool fileIsOpen = inputFile.is_open();
     if (fileIsOpen){
         eraseMessage();
         std::string line;
         unsigned int counter = 0;
+        messageLength = 0;
         while (getline(inputFile, line)){
             if (counter == 0){
-                Helper_ReplaceMessageWith(line, messageContainer);
+                messageLength += Helper_ReplaceMessageWith(line, messageContainer);
             } else {
-                Helper_AppendToMessage(line, messageContainer);
+                messageLength += Helper_AppendToMessage(line, messageContainer);
             }
             counter ++;
         }
@@ -340,7 +316,7 @@ bool opcommMessage::Helper_AppendMessageToFile(const std::string &outputFileName
     std::ofstream outputFile(outputFileName.c_str(), std::fstream::out | std::fstream::app);
     bool fileIsOpen = outputFile.is_open();
     if (fileIsOpen){
-        outputFile << std::endl;
+        outputFile << '\r' << '\n';
         Helper_PublishMessageToFile(outputFile, messageContainer);
     } else {
         std::cout << "Error: Unable to open " << "output" << " file " << outputFileName << "!" << std::endl;
@@ -363,17 +339,18 @@ bool opcommMessage::Helper_WriteMessageToFile(const std::string &outputFileName,
     return fileIsOpen;
 }
 
-bool opcommMessage::Helper_ReadBitPatternFromFile_ReplacingExistingMessages(const std::string &inputFileName, std::vector<unsigned char> &messageContainer){
+bool opcommMessage::Helper_ReadBitPatternFromFile_ReplacingExistingMessages(const std::string &inputFileName, std::vector<unsigned char> &messageContainer, unsigned int & messageLength){
     std::ifstream inputFile(inputFileName.c_str(), std::fstream::in);
     bool fileIsOpen = inputFile.is_open();
     if (fileIsOpen){
         eraseMessage();
         std::string line;
+        messageLength = 0;
         while (getline(inputFile,line)){
             unsigned short counter = 0;
             unsigned short totalLength = line.length();
             unsigned char character;
-
+            messageLength += totalLength;
             while (totalLength - counter >= CHAR_BIT){
                 character = convertBitToChar(line.substr(counter, CHAR_BIT));
                 counter = counter + CHAR_BIT;
@@ -393,13 +370,13 @@ bool opcommMessage::Helper_ReadBitPatternFromFile_ReplacingExistingMessages(cons
     return fileIsOpen;
 }
 
-bool opcommMessage::Helper_AppendBitPatternToFile(const std::string &outputFileName, const std::vector<unsigned char> &messageContainer){
+bool opcommMessage::Helper_AppendBitPatternToFile(const std::string &outputFileName, const std::vector<unsigned char> &messageContainer, const unsigned int messageLength){
     std::ofstream outputFile(outputFileName.c_str(), std::fstream::out | std::fstream::app);
     bool fileIsOpen = outputFile.is_open();
     if (fileIsOpen){
         outputFile << convertCharToBit('\r') << convertCharToBit('\n');
         outputFile << std::endl;
-        Helper_PublishBitPatternToFile(outputFile, messageContainer);
+        Helper_PublishBitPatternToFile(outputFile, messageContainer, messageLength);
     } else {
         std::cout << "Error: Unable to open " << "output" << " file " << outputFileName << "!" << std::endl;
     }
@@ -408,11 +385,11 @@ bool opcommMessage::Helper_AppendBitPatternToFile(const std::string &outputFileN
     return fileIsOpen;
 }
 
-bool opcommMessage::Helper_WriteBitPatternToFile(const std::string &outputFileName, const std::vector<unsigned char> &messageContainer){
+bool opcommMessage::Helper_WriteBitPatternToFile(const std::string &outputFileName, const std::vector<unsigned char> &messageContainer, const unsigned int messageLength){
     std::ofstream outputFile(outputFileName.c_str(), std::fstream::out | std::fstream::trunc);
     bool fileIsOpen = outputFile.is_open();
     if (fileIsOpen){
-        Helper_PublishBitPatternToFile(outputFile, messageContainer);
+        Helper_PublishBitPatternToFile(outputFile, messageContainer, messageLength);
     } else {
         std::cout << "Error: Unable to open " << "output" << " file " << outputFileName << "!" << std::endl;
     }
@@ -421,15 +398,20 @@ bool opcommMessage::Helper_WriteBitPatternToFile(const std::string &outputFileNa
     return fileIsOpen;
 }
 
-void opcommMessage::Helper_PublishBitPatternToFile(std::ofstream &outputFile, const std::vector<unsigned char> &messageContainer){
-    short counter = 0;
+void opcommMessage::Helper_PublishBitPatternToFile(std::ofstream &outputFile, const std::vector<unsigned char> &messageContainer, const unsigned int messageLength){
+    unsigned int counter = 0;
     for (std::vector<unsigned char>::const_iterator it = messageContainer.begin(); it != messageContainer.end(); ++ it){
-        counter ++;
-        if (counter > phraseLength){
+        if ((counter > phraseLength) && (counter % phraseLength == 0)){
             outputFile << std::endl;
-            counter -= phraseLength;
         }
-        outputFile << convertCharToBit(*it);
+        std::string charBitPattern = convertCharToBit(*it);
+        if (counter * CHAR_BIT + CHAR_BIT <= messageLength){
+            outputFile << charBitPattern;
+        } else{
+            for (unsigned int i = 0; i < messageLength % CHAR_BIT; i ++){
+                outputFile << charBitPattern[i];
+            }
+        }
     }
 }
 
@@ -438,10 +420,19 @@ std::string opcommMessage::Helper_toString(const std::vector<unsigned char> &mes
     return messageString;
 }
 
-std::string opcommMessage::Helper_toBitPattern(const std::vector<unsigned char> &messageContainer){
+std::string opcommMessage::Helper_toBitPattern(const std::vector<unsigned char> &messageContainer, const unsigned int messageLength){
     std::string bitPattern;
+    unsigned int counter = 0;
     for (std::vector<unsigned char>::const_iterator it = messageContainer.begin(); it != messageContainer.end(); ++ it){
-        bitPattern += convertCharToBit(*it);
+        std::string charBitPattern = convertCharToBit(*it);
+        if (counter * CHAR_BIT + CHAR_BIT <= messageLength){
+            bitPattern += charBitPattern;
+        } else{
+            for (unsigned int i = 0; i < messageLength % CHAR_BIT; i ++){
+                bitPattern += charBitPattern[i];
+            }
+        }
+        counter ++;
     }
     return bitPattern;
 }
@@ -467,52 +458,72 @@ unsigned char opcommMessage::convertBitToChar(const std::string &bitPattern){
 void opcommMessage::getSyncFromMessageReadable(){
     // Sequential Calls -- Order matters
     // Do NOT parallelize
-    encryptMessage();
-    addCheckSumOnEncrytedMessage();
+    lengthMessageEncrypted = encryptMessage();
+    lengthMessageEncryptedChecksum = addCheckSumOnEncrytedMessage();
 }
 
 void opcommMessage::getSyncFromMessageEncrypted(){
     // Interchangagable Steps
     // Can be parallelize if needed
-    decryptMessage();
-    addCheckSumOnEncrytedMessage();
+    lengthMessageReadable = decryptMessage();
+    lengthMessageEncryptedChecksum = addCheckSumOnEncrytedMessage();
 }
 
 void opcommMessage::getSyncFromMessageEncryptedChecksum(){
     // Sequential Calls -- Order matters
     // Do NOT parallelize
-    removeCheckSumOnEncrytedMessage();
-    decryptMessage();
+    lengthMessageEncrypted = removeCheckSumOnEncrytedMessage();
+    lengthMessageReadable = decryptMessage();
 }
 
-void opcommMessage::encryptMessage(){
+unsigned int opcommMessage::encryptMessage(){
     switch (this->encryption){
         case EncryptionMethodNone:
             Helper_ReplaceMessageWith(opcommEncryptionMethods::encrypt_NoEncryptionMethod(messageToString(opcommMessage::MessageReadable)), this->containerMessageEncrypted);
+            return lengthMessageReadable;
+            break;
+        default:
+            Helper_ReplaceMessageWith(opcommEncryptionMethods::encrypt_NoEncryptionMethod(messageToString(opcommMessage::MessageReadable)), this->containerMessageEncrypted);
+            return lengthMessageReadable;
             break;
     }
 }
 
-void opcommMessage::decryptMessage(){
+unsigned int opcommMessage::decryptMessage(){
     switch (this->encryption){
         case EncryptionMethodNone:
             Helper_ReplaceMessageWith(opcommEncryptionMethods::decipher_NoEncryptionMedthod(messageToString(opcommMessage::MessageEncrypted)), this->containerMessageReadable);
+            return lengthMessageEncrypted;
+            break;
+        default:
+            Helper_ReplaceMessageWith(opcommEncryptionMethods::decipher_NoEncryptionMedthod(messageToString(opcommMessage::MessageEncrypted)), this->containerMessageReadable);
+            return lengthMessageEncrypted;
             break;
     }
 }
 
-void opcommMessage::addCheckSumOnEncrytedMessage(){
+unsigned int opcommMessage::addCheckSumOnEncrytedMessage(){
     switch (this->checksum){
         case ChecksumMethodNone:
             Helper_ReplaceMessageWith(opcommChecksumMethods::addChecksum_NoChecksumMethod(messageToString(opcommMessage::MessageEncrypted)), this->containerMessageEncryptedChecksum);
+            return lengthMessageEncrypted;
+            break;
+        default:
+            Helper_ReplaceMessageWith(opcommChecksumMethods::addChecksum_NoChecksumMethod(messageToString(opcommMessage::MessageEncrypted)), this->containerMessageEncryptedChecksum);
+            return lengthMessageEncrypted;
             break;
     }
 }
 
-void opcommMessage::removeCheckSumOnEncrytedMessage(){
+unsigned int opcommMessage::removeCheckSumOnEncrytedMessage(){
     switch (this->checksum){
         case ChecksumMethodNone:
             Helper_ReplaceMessageWith(opcommChecksumMethods::rmChecksum_NoChecksumMethod(messageToString(opcommMessage::MessageEncryptedChecksum)), this->containerMessageEncrypted);
+            return lengthMessageEncryptedChecksum;
+            break;
+        default:
+            Helper_ReplaceMessageWith(opcommChecksumMethods::rmChecksum_NoChecksumMethod(messageToString(opcommMessage::MessageEncryptedChecksum)), this->containerMessageEncrypted);
+            return lengthMessageEncryptedChecksum;
             break;
     }
 }

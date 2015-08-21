@@ -75,8 +75,8 @@ class opcommMessage {
         void eraseMessage();
 
         void printMessage(MessageType messageType);
-        void appendToMessage(MessageType messageType, const std::string &messageTrailing);
-        void replaceMessageWith(MessageType messageType, const std::string &newMessage);
+        void appendToMessageReable(const std::string &messageTrailing);
+        void replaceMessageReadableWith(const std::string &newMessage);
 
         bool writeMessageToFile(MessageType messageType, const std::string &outputFileName);
         bool appendMessageToFile(MessageType messageType, const std::string &outputFileName);
@@ -103,6 +103,10 @@ class opcommMessage {
         std::vector<unsigned char> containerMessageEncrypted;
         std::vector<unsigned char> containerMessageEncryptedChecksum;
 
+        unsigned int lengthMessageReadable;
+        unsigned int lengthMessageEncrypted;
+        unsigned int lengthMessageEncryptedChecksum;
+
         EncryptionMethods encryption;
         ChecksumMethods checksum;
 
@@ -114,22 +118,22 @@ class opcommMessage {
         }
 
         void Helper_PrintMessage(const std::vector<unsigned char> & messageContainer);
-        void Helper_AppendToMessage(const std::string &messageTrailing, std::vector<unsigned char> & messageContainer);
-        void Helper_ReplaceMessageWith(const std::string &newMessage, std::vector<unsigned char> & messageContainer);
+        unsigned int Helper_AppendToMessage(const std::string &messageTrailing, std::vector<unsigned char> & messageContainer);
+        unsigned int Helper_ReplaceMessageWith(const std::string &newMessage, std::vector<unsigned char> & messageContainer);
 
         bool Helper_WriteMessageToFile(const std::string &outputFileName, const std::vector<unsigned char> & messageContainer);
         bool Helper_AppendMessageToFile(const std::string &outputFileName, const std::vector<unsigned char> & messageContainer);
-        bool Helper_ReadMessageFromFile_ReplacingExistingMessages(const std::string &inputFileName, std::vector<unsigned char> & messageContainer);
+        bool Helper_ReadMessageFromFile_ReplacingExistingMessages(const std::string &inputFileName, std::vector<unsigned char> & messageContainer, unsigned int & messageLength);
 
-        bool Helper_WriteBitPatternToFile(const std::string &outputFileName, const std::vector<unsigned char> & messageContainer);
-        bool Helper_AppendBitPatternToFile(const std::string &outputFileName, const std::vector<unsigned char> & messageContainer);
+        bool Helper_WriteBitPatternToFile(const std::string &outputFileName, const std::vector<unsigned char> & messageContainer, const unsigned int messageLength);
+        bool Helper_AppendBitPatternToFile(const std::string &outputFileName, const std::vector<unsigned char> & messageContainer, const unsigned int messageLength);
         // input file consists of 0s and 1s
-        bool Helper_ReadBitPatternFromFile_ReplacingExistingMessages(const std::string &inputFileName, std::vector<unsigned char> & messageContainer);
+        bool Helper_ReadBitPatternFromFile_ReplacingExistingMessages(const std::string &inputFileName, std::vector<unsigned char> & messageContainer, unsigned int & messageLength);
 
         std::string Helper_toString(const std::vector<unsigned char> & messageContainer);
-        std::string Helper_toBitPattern(const std::vector<unsigned char> & messageContainer);
+        std::string Helper_toBitPattern(const std::vector<unsigned char> & messageContainer, const unsigned int messageLength);
 
-        void Helper_PublishBitPatternToFile(std::ofstream &outputFile, const std::vector<unsigned char> & messageContainer);
+        void Helper_PublishBitPatternToFile(std::ofstream &outputFile, const std::vector<unsigned char> & messageContainer, const unsigned int messageLength);
         void Helper_PublishMessageToFile(std::ofstream &outputFile, const std::vector<unsigned char> & messageContainer);
 
 
@@ -139,12 +143,12 @@ class opcommMessage {
         void getSyncFromMessageEncryptedChecksum();
 
         // -> Encryption
-        void encryptMessage();
-        void decryptMessage();
+        unsigned int encryptMessage();
+        unsigned int decryptMessage();
 
         // -> Checksum
-        void addCheckSumOnEncrytedMessage();
-        void removeCheckSumOnEncrytedMessage();
+        unsigned int addCheckSumOnEncrytedMessage();
+        unsigned int removeCheckSumOnEncrytedMessage();
 };
 
 

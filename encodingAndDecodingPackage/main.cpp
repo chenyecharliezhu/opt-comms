@@ -12,17 +12,21 @@ void testOpcommMessage();
 // Tests
 int main() {
 
+    testOpcommMessage();
+
+    std::cout << "----------------------" << std::endl << std::endl;
+
     opcommMessage testFour;
-    testFour.replaceMessageWith(opcommMessage::MessageReadable, "1");
+    testFour.replaceMessageReadableWith("1");
 
     opcommMessage testFive;
-    testFive.replaceMessageWith(opcommMessage::MessageReadable, "9");
+    testFive.replaceMessageReadableWith("9");
 
     opcommMessage testSix;
-    unsigned char testChar = '1' ^ '6';
+    unsigned char testChar = '1' ^ '9';
     std::string testString;
     testString += testChar;
-    testSix.replaceMessageWith(opcommMessage::MessageReadable, testString);
+    testSix.replaceMessageReadableWith(testString);
 
     std::cout << testFour.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
     std::cout << testFive.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
@@ -31,12 +35,12 @@ int main() {
     std::cout << std::endl << std::endl;
 
     opcommMessage testSeven;
-    testSeven.replaceMessageWith(opcommMessage::MessageReadable, "my name is charlie");
+    testSeven.replaceMessageReadableWith("my name is charlie");
     std::cout << testSeven.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
-    testSeven.replaceMessageWith(opcommMessage::MessageReadable, opcommChecksumMethods::addChecksum_LRC8(testSeven.messageToString(opcommMessage::MessageReadable)));
+    testSeven.replaceMessageReadableWith(opcommChecksumMethods::addChecksum_LRC8(testSeven.messageToString(opcommMessage::MessageReadable)));
     std::cout << testSeven.messageToBitPattern(opcommMessage::MessageReadable) << std::endl;
 
-    std::cout << opcommChecksumMethods::rmChecksum_LRC8(]testSeven.messageToString(opcommMessage::MessageReadable)) << std::endl;
+    std::cout << opcommChecksumMethods::rmChecksum_LRC8(testSeven.messageToString(opcommMessage::MessageReadable)) << std::endl;
     std::cout << opcommChecksumMethods::validateChecksum_LRC8(testSeven.messageToString(opcommMessage::MessageReadable)) << std::endl;
     std::cout << opcommChecksumMethods::validateChecksum_LRC8("bb") << std::endl;
     return 0;
@@ -45,12 +49,12 @@ int main() {
 
 void testOpcommMessage(){
     opcommMessage test(opcommMessage::EncryptionMethodNone, opcommMessage::ChecksumMethodNone);
-    test.replaceMessageWith(opcommMessage::MessageReadable, "Hello");
+    test.replaceMessageReadableWith("Hello");
     test.printMessage(opcommMessage::MessageEncrypted);
     cout << endl << "--------------------" << endl;
     test.printMessage(opcommMessage::MessageEncryptedChecksum);
     cout << endl << "-------------------" << endl;
-    test.replaceMessageWith(opcommMessage::MessageEncrypted, "Bye");
+    test.replaceMessageReadableWith("Bye");
     cout << test.messageToString(opcommMessage::MessageEncrypted) << " : " << test.messageToBitPattern(opcommMessage::MessageEncryptedChecksum) << endl << "----------------" << endl;
     test.writeMessageToFile(opcommMessage::MessageEncrypted, messageFile);
     test.eraseMessage();
@@ -58,7 +62,7 @@ void testOpcommMessage(){
     test.readMessageFromFile_ReplacingExistingMessages(opcommMessage::MessageEncryptedChecksum, messageFile);
     test.printMessage(opcommMessage::MessageEncrypted);
     cout << endl << "-------------" << endl;
-    test.appendToMessage(opcommMessage::MessageReadable, "Hello");
+    test.appendToMessageReable("Hello");
     test.printMessage(opcommMessage::MessageEncrypted);
     cout << endl << " ------------ " <<  endl;
     test.writeMessageBitPatternToFile(opcommMessage::MessageEncrypted, textFile);
@@ -76,14 +80,14 @@ void testOpcommMessage(){
 
     opcommMessage testTwo;
     test.eraseMessage();
-    test.replaceMessageWith(opcommMessage::MessageReadable, "Hello");
-    testTwo.replaceMessageWith(opcommMessage::MessageReadable, "Hello");
+    test.replaceMessageReadableWith("Hello");
+    testTwo.replaceMessageReadableWith("Hello");
 
     assert (test == testTwo);
     cout << (test != testTwo) << endl;
     assert (false == (test != testTwo));
 
-    testTwo.appendToMessage(opcommMessage::MessageEncrypted, "Bye");
+    testTwo.appendToMessageReable("Bye");
     assert (test != testTwo);
 
     opcommMessage testThree = testTwo;
